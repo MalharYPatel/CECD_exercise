@@ -1,0 +1,8 @@
+Set up a model, or range of models of your choosing to forecast quarterly GDP growth using the range of monthly and quarterly survey indicators (PMIs, consumer confidence, etc) provided in the attached Forecasting dataset. Then illustrate your models' performance through some appropriate combination of summary statistics and charts. For this, you can focus on just a couple of convenient forecast horizons, for example 1 and 2-quarters ahead. Please also include the ability for users to change some key model parameters, and to explore different subsets of your results. Note, for the purpose of this exercise, forecast accuracy is less important than the surrounding setup.
+ 
+
+Further exercise guidelines: Please use either R or Python to complete the exercise, and feel free to be creative on features, interactivity, dataviz, etc. At the same time, do not feel you need to present us with a polished final product; for the purpose of this interview a minimum viable product will do (note, we expect you to put in no more than 1-2 days’ work). We are ultimately more interested in understanding your general approach to coding, including your ability to make that interpretable, robust, and scalable (potentially including to other similar applications). We will also be interested in discussing how you would then go about optimising the final user experience, if you had more time to develop.
+
+ 
+
+On the day, we would like you to spend some 10 or 15 minutes talking us through your code, chosen design, and results. We will then have a chat around that. To help us prepare, we'd be grateful if you could also share the codes with us no later than 7pm on Sunday 21 April, via GitHub.
