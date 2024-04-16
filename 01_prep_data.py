@@ -30,9 +30,9 @@ quarterly_df = pd.read_excel("data/Forecasting_dataset.xlsx", 'Quarterly surveys
 # Inspection in the variable explorer shows us that the column names are messy, the dat column has no name,
 # and the monthly dataframe has a trailing tail of missing information. We need to clean this up.
 #Also of note, is that the monthly series doesn't extend as far back. If this is used, it will limit our training data
-gdp_df = clean_gdp(gdp_df, ast.literal_eval(config['data']['gdp_columns']))
-monthly_df = clean_gdp(monthly_df, ast.literal_eval(config['data']['monthly_columns']))
-quarterly_df = clean_gdp(quarterly_df, ast.literal_eval(config['data']['quarterly_columns']))
+gdp_df = clean_data(gdp_df, ast.literal_eval(config['data']['gdp_columns']))
+monthly_df = clean_data(monthly_df, ast.literal_eval(config['data']['monthly_columns']))
+quarterly_df = clean_data(quarterly_df, ast.literal_eval(config['data']['quarterly_columns']))
 
 
 
@@ -50,15 +50,15 @@ quarterly_df = clean_gdp(quarterly_df, ast.literal_eval(config['data']['quarterl
 # stationarity_df = pd.DataFrame({'variable':cols, 'p_value':adf_result})
 
 
-gdp_cols = gdp_df.columns
+gdp_cols = gdp_df.columns.copy()
 gdp_df = add_lags(gdp_df,  gdp_cols, 4)
 gdp_df = add_diffs(gdp_df, gdp_df, 4)
 
-monthly_cols = monthly_df.columns
+monthly_cols = monthly_df.columns.copy()
 monthly_df = add_lags(monthly_df, monthly_cols, 4)
 monthly_df = add_diffs(monthly_df, monthly_cols, 4)
 
-quarterly_cols = quarterly_df.columns
+quarterly_cols = quarterly_df.columns.copy()
 quarterly_df = add_lags(quarterly_df, quarterly_cols, 12)
 quarterly_df = add_diffs(quarterly_df, quarterly_cols, 12)
 

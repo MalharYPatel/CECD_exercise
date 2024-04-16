@@ -22,26 +22,34 @@ from xgboost import XGBRegressor#XGBoost model
 from sklearn.linear_model import ARDRegression #ARD
 from sklearn.model_selection import GridSearchCV # gridsearch wrapper for hyperparameters
 from sklearn.metrics import mean_squared_error as MSE #evaluation metric used to construct RMSE
+from joblib import dump
+import time
 #config
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-#%%
+
 # 1. Load Data
+t0 = time.time()
 partial_df = pd.read_csv(f"{wd}{config['data']['partial_data_output_path']}")
 full_df = pd.read_csv(f"{wd}{config['data']['full_data_output_path']}")
+t1 = time.time()
+print("Data loading took", (t1 - t0), "seconds")
 
 #2. Scale_and_split both sets of data
-
-partial_df_data = scale_and_split(df = partial_df, horizon = 1, test_frac = 0.25,
-                                                   scaler_save_path = config['model_prep']['scaler_path'],
+t0 = time.time()
+partial_df_data = scale_and_split(df = partial_df, horizon = ast.literal_eval(config['model_prep']['horizon']), test_frac = 0.25,
+                                                   scaler_save_path = f"{wd}/{config['model_prep']['scaler_path']}",
                                                    shuffle_split = False, seed = 7)
 
 full_df_data = scale_and_split(df = full_df, horizon = 1, test_frac = 0.25,
-                                                   scaler_save_path = config['model_prep']['scaler_path'],
+                                                   scaler_save_path = f"{wd}/{config['model_prep']['scaler_path']}",
                                                    shuffle_split = False, seed = 7)
 
-data = [(full_df_data, 'full'), (partial_df_data, 'partial')]
+data = [['full', full_df_data], ['partial', partial_df_data]]
+t1 = time.time()
+print("Data scaling and splitting took", (t1 - t0), "seconds")
+
 
 '''
 pca = PCA()
@@ -61,64 +69,20 @@ X_train = pca.transform(X_train)
 X_test = pca.transform(X_test)
 '''
 
-#Fit and evaluate models
-model_name = []
-data_used = []
-RMSE_list = []
-fitted_models = []
+#Fit models
+t0 = time.time()
+optimised_models_list= make_optimised_model_list(data_list = data, model_list = model_list, cv = 5)
+t1 = time.time()
+print("Optimising fit for all models took", (t1 - t0)/60, "minutes")
 
-for data_set in data:
-    X_train, X_test, y_train, y_test = data_set[0]
-    for model in model_list:
-        optimised_model =  fit_model(model = model[0], 
-                   params = model[1],
-                   X = X_train, y = y_train, cv = 5)
-        y_pred = optimised_model.predict(X_test)
-        RMSE = MSE(y_test, y_pred)**0.5
-        
-        model_name.append(model[2])
-        data_used.append(data_set[1])
-        RMSE_list.append(RMSE)
-        fitted_models.append(optimised_model)
-   
-summary_df = pd.DataFrame({'Model':model_name,
-                           'Data': data_used,
-                           'RMSE': RMSE_list})        
+#Save list of optimised models
+t0 = time.time()
+dump(optimised_models_list, f"{wd}/{config['model_prep']['optimised_models_list_path']}")
+t1 = time.time()
+print("Saving all models took", (t1 - t0), "seconds")
 
-
-
-#%% View models
-#we can see from len(y_test) that the test was only on 21 data points. We can use these for our evaluation
-
-
-eval_df = partial_df.copy()
-eval_df['Next_Q_gdp_growth'] = eval_df['gdp_growth'].shift(-1)
-eval_df = eval_df.replace([np.inf, -np.inf], 0)
-eval_df = eval_df.dropna()
-eval_df = eval_df.tail(21)
-X = eval_df.drop(['date', 'Next_Q_gdp_growth', 'y'], axis=1)
-
-
-for n in range(0, 3):
-    x = X.iloc[:, :(full_df.shape[1] - 2)]
-    name = summary_df.loc[n, 'Model']
-    sample = summary_df.loc[n, 'Data']
-    eval_df[f"prediction_{name}_{sample}"] = fitted_models[n].predict(x)
-    
-for n in range(3, 6):
-    name = summary_df.loc[n, 'Model']
-    sample = summary_df.loc[n, 'Data']
-    eval_df[f"prediction_{name}_{sample}"] = fitted_models[n].predict(X)
-
-chart_df = eval_df.iloc[:, :(summary_df.shape[0]+1)]
-
-
-def chart_results():
-    return
-
-#gs_rf.best_params_
-#gs_rf.score(X_train, y_train)
-
-
-
-
+#Save processed data
+t0 = time.time()
+dump(data, f"{wd}/{config['model_prep']['scaled_data_path']}")
+t1 = time.time()
+print("Saving all data", (t1 - t0), "seconds")

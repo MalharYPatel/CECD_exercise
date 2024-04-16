@@ -1,36 +1,27 @@
-from statsmodels.tsa.stattools import adfuller
-import configparser
 import pandas as pd
 import numpy as np
-import yfinance as yf
-from fredapi import Fred
-import pandas_ta as ta
 
-#Get config variables
-config_path = __file__
-config_path = config_path.split('functions\data_functions.py')[0]
-config_path = config_path + 'config.ini'
-config = configparser.ConfigParser()
-config.read(config_path)
-
-def clean_gdp(df, cols):
+def clean_data(df, cols):
+    '''
+    Simple cleaning. Removes NAs, and selects only relevant columns
+    PARAMS
+    df - the input df
+    cols - a list of columns to select
+    '''
     df = df.dropna()
     df.columns = cols
     return df
 
-
-def clean_monthly(df, cols):
-    df = df.dropna()
-    df.columns = cols
-    return df
-
-def clean_quarterly(df, cols):
-    df = df.dropna()
-    df.columns = cols    
-    return df
 
 def add_lags(df, cols, n_lags):
-    for col in df.columns:
+    '''
+    Adds past values (lags) from select columns as new column values.
+    PARAMS
+    df - the input df
+    cols - a list of columns to make lags from
+    n_lags - the functions makes this many number of lags. eg if set to 3, it will make a column, for lag1, lag2 and lag3 for each variable
+    '''
+    for col in cols:
         if col == 'date':
             continue
         for lag in range(1, n_lags + 1):
@@ -40,10 +31,22 @@ def add_lags(df, cols, n_lags):
     return(df)
 
 def add_diffs(df, cols, n):
-    for col in df.columns:
+    '''
+    Adds fractional differences releative to past values, for select columns, and puts them in a new column.
+    PARAMS
+    df - the input df
+    cols - a list of columns to make differences from
+    n - the functions makes this many number of lags to make fractional differences from
+    eg if set to 3, it will make a column, for current value/lag1, current value/lag2 and current value/lag3, for each variable
+    '''
+    for col in cols:
         if col == 'date':
             continue
         for lag in range(1, n + 1):
             df[f"{col}_diff{lag}"] = df[col]/df[col].shift(lag)
     df = df.dropna()
     return(df)
+
+# Potential to do further work with stationarity using this:
+# from statsmodels.tsa.stattools import adfuller
+# or with technical indicators including Movign averages, using the ta library
