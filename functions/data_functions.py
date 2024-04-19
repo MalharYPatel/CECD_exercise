@@ -47,6 +47,42 @@ def add_diffs(df, cols, n):
     df = df.dropna()
     return(df)
 
-# Potential to do further work with stationarity using this:
+# Potential to do further work :
+#a) with stationarity using this:
 # from statsmodels.tsa.stattools import adfuller
-# or with technical indicators including Movign averages, using the ta library
+
+# b) Using automated fetaure creation an selecion with tsfresh
+
+    # from tsfresh import extract_features
+    # extracted_features = extract_features(df, column_id="date", column_sort="date"
+                                          
+    # from tsfresh import select_features
+    # from tsfresh.utilities.dataframe_functions import impute
+    # impute(extracted_features)
+    # features_filtered = select_features(extracted_features, y) # here y would have to be out shifted() gp growth variable
+    
+# c) or with technical indicators including Moving averages, using the ta library
+# In theory, the use of MAs and lagged variables, created a fully specfied VARIMA(X) model
+
+# d) Feature reduction AFTER feaure egineering. THis could be interpretable eg RFE, 
+# stepwise feature selection with AIC ec, or fature rojecton with eg PCA. Here is some example code
+# pca = PCA()
+# pca.fit(X_train)
+# evr = pd.Series(pca.explained_variance_ratio_)
+# evrsum = evr.cumsum()
+# evrsum.iloc[25:35]
+
+# #based on the above, we can chose the number of components, which captures 95% variance
+# pca = PCA(n_components = 33) #g 33 components in this example
+# pca.fit(X_train) #fit model
+
+# #dump(pca, 'pca.joblib') #save model
+
+# #apply transforms
+# X_train = pca.transform(X_train)
+# X_test = pca.transform(X_test)
+
+
+
+
+

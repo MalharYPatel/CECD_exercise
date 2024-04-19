@@ -50,25 +50,6 @@ data = [['full', full_df_data], ['partial', partial_df_data]]
 t1 = time.time()
 print("Data scaling and splitting took", (t1 - t0), "seconds")
 
-
-'''
-pca = PCA()
-pca.fit(X_train)
-evr = pd.Series(pca.explained_variance_ratio_)
-evrsum = evr.cumsum()
-evrsum.iloc[25:35]
-
-#based on the above, we will use 33 components, which captures 95% variance
-pca = PCA(n_components = 33)
-pca.fit(X_train) #fit model
-
-#dump(pca, 'pca.joblib') #save model
-
-#apply transforms
-X_train = pca.transform(X_train)
-X_test = pca.transform(X_test)
-'''
-
 #Fit models
 t0 = time.time()
 optimised_models_list= make_optimised_model_list(data_list = data, model_list = model_list, cv = 5)
