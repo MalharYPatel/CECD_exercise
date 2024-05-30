@@ -1,18 +1,18 @@
 # CECD_exercise
-Interview exercise repo
+Cookie cutter template repo, forusign scikit learn models in time series estimation, using mixed timeframe source data as an example
 
 # Requirements
 Requirements.txt to add
 
 # Summary
-This repo takes the excel spreadsheet of GDP growth and survey indicators, and does the following:
+This repo takes the example excel spreadsheet of GDP growth and survey indicators, and does the following:
 1. 01_prep_data cleans this data, merges it into one table, and adds some feature engineering. " cuts of data are identified:
 partial - which uses all the features, but as a result, has fewer rows (since some survery data starts much later)
 full - which uses a longer time series ie has a higher row-count, but does not feature all the survey data
 2. 02_fit_model fits a number of models to both cuts of the data
 3. 03_evaluate_model produces summary statistics for each model, produces estimations, and also a chart to visualise these estimations
 
-Note, that 03_evalute_model has a .py script, which can be used to generate a ploitly chart in a web window. But for interactivity, and easier modification, the preferred approach is to open 03_evalute_model.ipynb, which is a jupyter notebook. The charts and dataframes will then render in the relevant windows 
+Note, that 03_evalute_model has a .py script, which can be used to generate a plotly chart in a web window. But for interactivity, and easier modification, the preferred approach is to open 03_evalute_model.ipynb, which is a jupyter notebook. The charts and dataframes will then render in the relevant windows 
 
 # Functions
 The modular functiona used in the above scripts are found in the functions folder
